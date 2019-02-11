@@ -74,13 +74,7 @@ function imagetrain(imgpath, pathout, markertype)
     RecordEvents(hbox(i1, vbox(nextimg, saveout, s1),  parent = Scene(resolution = (1000,1000))), pathout)
 end
 
-
-#=
-markeroptions = ('+', '□', '⊚')
-on(markerb[end][:clicks]) do c
-    m = markeroptions[rand(1:3)]
-    println("changing marker to $m")
-    p1[:marker] = m 
+function example()
+    include(joinpath(@__DIR__, "..", "examples/example.jl"))
 end
 
-=#

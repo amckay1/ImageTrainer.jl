@@ -1,6 +1,6 @@
 module ImageTrainer
 
-using Makie, FileIO, DelimitedFiles
+using Makie, FileIO, DelimitedFiles, StatsBase
 
 include("imgtrainerfxns.jl")
 

@@ -103,3 +103,52 @@ function visualizelabel(imgpath, imgcsv)
     segs =convert(Array{Pair{Point{2,Float32},Point{2,Float32}},1}, segs)
     linesegments!(segs, color=:red, linewidth = 2)
 end
+
+function createtestset(imgpath, imgcsv, samplesize)
+    # going to say what is pos_label, what is neg_label, and what is labeless
+    # first, randomly sample the image:
+    img = load(imgpath)
+    imgsamples = Array{Point2f0}(undef, samplesize)
+    for i in 1:samplesize
+        imgsamples[i] = Point2f0(rand(1:size(img, 1)), rand(1:size(img,2)))
+    end
+    
+    # second, read boxes from file
+    boxes = readdlm(imgcsv, ',')
+
+    labels = [] # 0 is non, 1 is inbetween, 2 is pos
+    buffer = 2
+
+    # loop through samples and label
+    for p in imgsamples
+        # is in box?
+        l = false
+        for b in eachrow(boxes)
+            x = b[1]
+            y = b[2]
+            lx = b[3]/4
+            ly = b[3]/2
+            if x-lx < p[1] < x+lx  && y-ly < p[2] < y+ly
+                push!(labels, 2)
+                l = true
+                break
+            end
+        end
+        if l == false
+            push!(labels, 0)
+        end
+    end
+    return hcat(imgsamples, labels)
+end
+
+function visualizelabels(imgpath, labels)
+    img = load(imgpath)
+    scene = image(img, show_axis = false)
+    lx= map(p -> p[1], labels[:,1])
+    ly= map(p -> p[2], labels[:,1])
+    #lc = replace(labels[:, 2], 0 => :black, 2 => :red)
+    lc = convert(Array{Float64}, labels[:,2])
+    lc = replace(lc, 0.0 => 0.4, 2.0 => 0.9)
+    scatter!(lx, ly, color = lc, markersize = 2)
+
+end

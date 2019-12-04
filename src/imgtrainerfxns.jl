@@ -39,12 +39,14 @@ function add_move!(scene, points, pplot)
 end
 
 function imagetrain(imgpath, pathout, markertype)
+    imgname = split(split(imgpath, '/')[end], '.')[1]
+    csvpath = joinpath(pathout, imgname*".csv")
     # first, load our image
     img = load(imgpath)
 
     # then, setup environment
     # http://makie.juliaplots.org/stable/examples-interaction.html
-    i1 = image(img);
+    i1 = image(img, show_axis = false);
     points = Node(Point2f0[])
     clicks = Node(Point2f0[(0,0)])
     
@@ -59,12 +61,17 @@ function imagetrain(imgpath, pathout, markertype)
     s1 = slider(LinRange(1, 1000, 1000), raw = true, camera = campixel!, start = 300)
 
     on(nextimg[end][:clicks]) do c
+        # need to bring up next image here
         println("clicked Next Image")
     end
 
     on(saveout[end][:clicks]) do c
-        println("saving to $pathout")
-        writedlm(pathout, points.val, ',')
+        println("saving to $csvpath")
+        pout = map(p -> convert(Array{Float64}, p), points.val)
+        pout = map(p -> permutedims(p[:,:], (2,1)), pout)
+        pout = vcat(pout...)
+        forout = hcat(pout, fill(s1[end][:value].val, size(points.val,1) ))
+        writedlm(csvpath, forout, ',')
     end
 
     add_move!(i1, points, pplot)
@@ -78,3 +85,21 @@ function example()
     include(joinpath(@__DIR__, "..", "examples/example.jl"))
 end
 
+function visualizelabel(imgpath, imgcsv)
+    img = load(imgpath)
+    scene = image(img, show_axis = false)
+    boxes = readdlm(imgcsv, ',')
+    #segs = Array{Pair{Point{2,Float32},Point{2,Float32}},1}[]
+    segs = []
+    for i in 1:size(boxes, 1)
+        row = boxes[i, :]
+        blx = row[3]/4
+        bly = row[3]/2
+        push!(segs, Point2f0(row[1]-blx, row[2]-bly) => Point2f0(row[1]+blx, row[2]-bly))
+        push!(segs, Point2f0(row[1]+blx, row[2]-bly) => Point2f0(row[1]+blx, row[2]+bly) )
+        push!(segs, Point2f0(row[1]+blx, row[2]+bly) => Point2f0(row[1]-blx, row[2]+bly))
+        push!(segs, Point2f0(row[1]-blx, row[2]+bly) => Point2f0(row[1]-blx, row[2]-bly) )
+    end
+    segs =convert(Array{Pair{Point{2,Float32},Point{2,Float32}},1}, segs)
+    linesegments!(segs, color=:red, linewidth = 2)
+end

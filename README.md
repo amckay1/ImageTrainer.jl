@@ -1,27 +1,14 @@
 # ImageTrainer
 
 ## Objective
-Create a GUI for annotating images for downstream ML approaches
+Create a GUI for annotating images for downstream ML
 
 ## Quickstart
-1. add this package using Julia v1.1 Pkg manager
-2. run "using ImageTrainer" then "ImageTrainer.example()" to annotate an example tif file
-3. Once image is open (takes 20 seconds currently):
+1. add this package using Julia Pkg manager
+2. run "examples/labelimage.jl" to annotate 
+3. Once image is open:
     * Add marker by left clicking with the left command button
-    * Move the marker by left clicking with the left shift button
-    * Remove the marker by left clicking with the left alt button
-    * Use the slider above to change the size of the marker/bounding box
-4. When done, click on the "Save Annotations" button to save to the predefined "pathout"
-
-## To Do
-* Change the marker by button press
-* When opening a directory, the "Next Image" button will move to the next image in the directory, or a sampled subset
-* Allow for multiple markers/types
-* Save data with more informative csv and annotated images.
-* Improve slow startup time: "IMKClient Stall detected" issue
-
-## API
-configlabels
-loadimgs
-labelimgs
+    * Move the marker by left clicking when the left shift button is held down
+    * Remove the marker by left clicking when the left alt button is held down
+    * Save and move to the next image by clicking 'b'
 

@@ -19,3 +19,9 @@ Create a GUI for annotating images for downstream ML approaches
 * Allow for multiple markers/types
 * Save data with more informative csv and annotated images.
 * Improve slow startup time: "IMKClient Stall detected" issue
+
+## API
+configlabels
+loadimgs
+labelimgs
+
